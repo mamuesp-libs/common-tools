@@ -1,9 +1,6 @@
 /**
  *
- * Partially Copyright (c) 2017 by Pavel Gurenko
  * Copyright (c) 2018 Manfred Mueller-Spaeth <fms1961@gmail.com>
- *
- *  Based on a tool from Pavel Gurenko: http://www.pavelgurenko.com/2017/05/getting-posix-tz-strings-from-olson.html
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
