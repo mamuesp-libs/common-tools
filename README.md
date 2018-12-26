@@ -1,0 +1,3 @@
+# Common tools (a tool collection)
+
+Just a bunch of base functionality you'll need everywhere ...

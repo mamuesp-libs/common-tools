@@ -1,0 +1,29 @@
+author: mamuesp
+description: A bunch of basic functions you need everywhere ...
+version: 0.1
+libs_version: ${mos.version}
+modules_version: ${mos.version}
+mongoose_os_version: ${mos.version}
+
+config_schema:
+  - ["common_tools", "o", {title: "Tool collection settings"}]
+  - ["common_tools.enable", "b", true, {title: "Set tools active when initializing the library"}]
+  - ["common_tools.data_path", "s", "", {title: "File system where eventually needed data is stored"}]
+
+sources:
+  - src
+
+includes:
+  - include
+  
+filesystem:
+  - mjs_fs
+
+tags:
+  - c
+
+libs:
+  - origin: https://github.com/mongoose-os-libs/vfs-common
+  - origin: https://github.com/mongoose-os-libs/core
+
+manifest_version: 2017-09-29
