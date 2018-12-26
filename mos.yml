@@ -19,6 +19,9 @@ includes:
 filesystem:
   - mjs_fs
 
+cdefs:
+  #TOOLS_DEBUG_ENUM: 1
+
 tags:
   - c
 
