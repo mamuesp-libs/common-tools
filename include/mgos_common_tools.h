@@ -44,8 +44,10 @@ typedef struct {
 char *sta_dev_ip;
 char *macAddr;
 char *fsInfo;
-char *result_keys;
+//char *result_keys;
+//char *result_object;
 
+/*
 typedef struct {
    char *key;
    int key_len;
@@ -54,6 +56,7 @@ typedef struct {
    enum json_token_type type;
    void *next;
 } json_token_listitem;
+*/
 
 const char *tools_get_device_id();
 
@@ -73,7 +76,8 @@ void tools_to_lower_case(char *txt);
 
 char *tools_get_fs_info(const char *path);
 
-json_token_listitem *tool_json_tokenlist_put(json_token_listitem *list, struct json_token *key, struct json_token *val);
+/*
+json_token_listitem *tool_json_tokenlist_put(json_token_listitem *list, struct json_token *key, struct json_token *val, bool skip);
 
 json_token_listitem *tool_json_tokenlist_new(void);
 
@@ -83,11 +87,14 @@ char *tool_json_get_keys(char *str_obj, int len);
 
 char *tool_json_merge(char *obj_A, int len_A, char *obj_B, int len_B);
 
+void tool_json_mergebuffer_free();
+
 char *tool_json_tokenlist_convert(json_token_listitem *list);
 
 char *tool_json_prepare_result(char *buf, int len);
 
 void tool_json_free_result();
+*/
 
 bool tools_common_tools_init(void);
 

@@ -1,7 +1,9 @@
 load('api_pwm.js');
 load('api_gpio.js');
+load('api_sys.js');
 
 let timeProfile = {};
+let logHead = (typeof logHead !== 'undefined') ? logHead : "TOOLS - ";
 
 let TOOLS = {
 	name: "TOOLS",
@@ -14,23 +16,28 @@ let TOOLS = {
 	_toUpper: ffi('void tools_to_upper_case(char *)'),
 	_toLower: ffi('void tools_to_lower_case(char *)'),
 	_getFileSystemInfo: ffi('char *tools_get_fs_info(char *)'),
-	_getKeys: ffi('char *tool_json_get_keys(char *, int)'),
-	_freeKeys: ffi('void tool_json_free_result(void)'),
-	_mergeObjects: ffi('char *tool_json_merge(char *, int, char *, int)'),
-	
-	mergeObjects: function(objA, objB) {
-		let strA = JSON.stringify(objA);
-		let strB = JSON.stringify(objB);
-		return JSON.parse(this._mergeObjects(strA, strA.length, strB, strB.length));
+
+	mergeObjects: function(objA, objB, clone) {
+		let key, res = {};
+		if (clone === true) {
+			objA = JSON.parse(JSON.stringify(objA));
+			objB = JSON.parse(JSON.stringify(objB));
+		}
+		for (key in objA) {
+			res[key] = objA[key];
+		}
+		for (key in objB) {
+			res[key] = objB[key];
+		}
+		return res;
 	},
 
 	getKeys: function(obj) {
-		let strObj = JSON.stringify(obj);
-		let keys = this._getKeys(strObj, strObj.length);
-		let result = this.splitString(keys, ',');
-		keys = null;
-		this._freeKeys();
-		return result;
+		let key, res = [];
+		for (key in objA) {
+			res.push(key);
+		}
+		return res;
 	},
 
 	replaceString: function(inTxt, search, replace, all) {

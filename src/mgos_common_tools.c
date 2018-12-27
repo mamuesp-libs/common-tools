@@ -165,6 +165,7 @@ char *tools_get_fs_info(const char *path) {
   */
 }
 
+/*
 static char *get_token_type_name(enum json_token_type type) {
   char *result = "INACTIVE";
 #ifdef TOOLS_DEBUG_ENUM  
@@ -225,7 +226,7 @@ json_token_listitem *tool_json_get_token(json_token_listitem *curr, struct json_
   return curr;
 }
 
-json_token_listitem *tool_json_tokenlist_put(json_token_listitem *list, struct json_token *key, struct json_token *val) {
+json_token_listitem *tool_json_tokenlist_put(json_token_listitem *list, struct json_token *key, struct json_token *val, bool skip) {
   json_token_listitem *curr = list;
   bool do_scan = true;
 
@@ -236,8 +237,10 @@ json_token_listitem *tool_json_tokenlist_put(json_token_listitem *list, struct j
       // stop walking through
       do_scan = false;
     } else if (strncmp(curr->key, key->ptr, key->len) == 0) {
-      // an item with the same key has been found, we overwrite it
-      tool_json_get_token(curr, key, val, curr->next);
+      if (skip == false) {
+        // an item with the same key has been found, we overwrite it
+        tool_json_get_token(curr, key, val, curr->next);
+      }
       // stop walking through
       do_scan = false;
     } else if (curr->next != NULL) {
@@ -309,15 +312,15 @@ char *tool_json_merge(char *obj_A, int len_A, char *obj_B, int len_B) {
   json_token_listitem *token_list = tool_json_tokenlist_new();
   struct json_token *key = malloc(sizeof(struct json_token));
   struct json_token *val = malloc(sizeof(struct json_token));
-  while ((h = json_next_key(obj_A, len_A, h, "", key, val)) != NULL) {
-    json_token_listitem *curr = tool_json_tokenlist_put(token_list, key, val);
+  while ((h = json_next_key(obj_B, len_B, h, "", key, val)) != NULL) {
+    json_token_listitem *curr = tool_json_tokenlist_put(token_list, key, val, false);
     LOG(LL_DEBUG, ("tool_json_merge: B -> [%.*s] -> [%.*s]", curr->key_len, curr->key, curr->val_len, curr->val));
     // get new key and val items
     key = malloc(sizeof(struct json_token));
     val = malloc(sizeof(struct json_token));
   }
-  while ((h = json_next_key(obj_B, len_B, h, "", key, val)) != NULL) {
-    json_token_listitem *curr = tool_json_tokenlist_put(token_list, key, val);
+  while ((h = json_next_key(obj_A, len_A, h, "", key, val)) != NULL) {
+    json_token_listitem *curr = tool_json_tokenlist_put(token_list, key, val, true);
     LOG(LL_DEBUG, ("tool_json_merge: B -> [%.*s] -> [%.*s]", curr->key_len, curr->key, curr->val_len, curr->val));
     // get new key and val items
     key = malloc(sizeof(struct json_token));
@@ -349,13 +352,24 @@ char *tool_json_tokenlist_convert(json_token_listitem *list) {
     }
   }
   mbuf_append(&res_buf, "}", 1);
-  char *result = json_asprintf("%.*s", res_buf.len, res_buf.buf);
-  LOG(LL_DEBUG, ("tool_json_tokenlist_convert: result -> [%s]", result));
+  tool_json_mergebuffer_free();
+  result_object = malloc(res_buf.len + 1);
+  sprintf(result_object, "%.*s", res_buf.len, res_buf.buf);
+  LOG(LL_DEBUG, ("tool_json_tokenlist_convert: result -> [%s]", result_object));
   mbuf_free(&res_buf);
-  return result;
+  return result_object;
 }
 
-char *tool_json_prepare_result(char *buf, int len) {
+void tool_json_mergebuffer_free(){
+  if (result_object != NULL)
+  {
+    free(result_object);
+    result_object = NULL;
+  }
+}
+
+char *tool_json_prepare_result(char *buf, int len)
+{
   tool_json_free_result();
   result_keys = malloc(len + 1);
   memset(result_keys, 0, len + 1);
@@ -364,26 +378,27 @@ char *tool_json_prepare_result(char *buf, int len) {
   return result_keys;
 }
 
-void tool_json_free_result() {
-  if (result_keys != NULL) {
-    free(result_keys);
-    result_keys = NULL;
+  void tool_json_free_result() {
+    if (result_keys != NULL) {
+      free(result_keys);
+      result_keys = NULL;
+    }
   }
-}
+*/
+  bool mgos_common_tools_init(void)
+  {
 
-bool mgos_common_tools_init(void) {
+    if (!mgos_sys_config_get_common_tools_enable())
+    {
+      return true;
+    }
 
-  if (!mgos_sys_config_get_common_tools_enable()) {
+    macAddr = malloc(64);
+    memset(macAddr, 0, 64);
+    fsInfo = malloc(256);
+    memset(fsInfo, 0, 256);
+    sta_dev_ip = malloc(STA_IP_LEN);
+    memset(sta_dev_ip, 0, STA_IP_LEN);
+
     return true;
   }
-  
-  macAddr = malloc(64);
-  memset(macAddr, 0, 64);
-  fsInfo = malloc(256);
-  memset(fsInfo, 0, 256);
-  sta_dev_ip = malloc(STA_IP_LEN);
-  memset(sta_dev_ip, 0, STA_IP_LEN);
-  
-  return true;
-}
-
