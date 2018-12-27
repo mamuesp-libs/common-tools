@@ -34,7 +34,7 @@ let TOOLS = {
 
 	getKeys: function(obj) {
 		let key, res = [];
-		for (key in objA) {
+		for (key in obj) {
 			res.push(key);
 		}
 		return res;
