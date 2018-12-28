@@ -234,10 +234,10 @@ let TOOLS = {
 	},
 
 	createStr: function(len) {
-		let result = '';
-		while (len >= 0) {
-			result += ' ';
-			len--;
+		let chunk = '    ';
+		let result = chunk;
+		while (len > result.length) {
+			result += chunk;
 		}		
 		return result;
 	}
