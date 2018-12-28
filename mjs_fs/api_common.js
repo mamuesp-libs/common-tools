@@ -15,7 +15,7 @@ let TOOLS = {
 	_getIpAddr: ffi('char *tools_get_device_ip(void)'),
 	_toUpper: ffi('void tools_to_upper_case(char *)'),
 	_toLower: ffi('void tools_to_lower_case(char *)'),
-	_toHEX: ffi('char *tools_to_hex(int, int)'),
+	_toHEX: ffi('int tools_to_hex(int, int, char *)'),
 	_getFileSystemInfo: ffi('char *tools_get_fs_info(char *)'),
 
 	mergeObjects: function (objA, objB, clone) {
@@ -211,18 +211,16 @@ let TOOLS = {
 	},
 
 	toHEX: function (probe, len) {
+		let result = this.createStr(len+1);
 		let number = 0;
 		let type = typeof probe;
 		if (type === "string") {
-			Log.info("probe is string");
 			number = JSON.parse(inTxt);
 		} else if (type === 'number') {
-			Log.info("probe is number");
 			number = probe;
 		}
-		let raw = this._toHEX(number, len);
-		let result = "0x" + raw;
-		Sys.free(raw);
+		this._toHEX(number, len, result);
+		result = "0x" + result.slice(0, len);
 		return result;
 	},
 
@@ -233,6 +231,15 @@ let TOOLS = {
 			}
 		}
 		return false;
+	},
+
+	createStr: function(len) {
+		let result = '';
+		while (len >= 0) {
+			result += ' ';
+			len--;
+		}		
+		return result;
 	}
 
 }

@@ -74,7 +74,7 @@ void tools_to_upper_case(char *txt);
 
 void tools_to_lower_case(char *txt);
 
-char *tools_to_hex(int num, int len);
+bool tools_to_hex(int num, int len, char *out);
 
 char *tools_get_fs_info(const char *path);
 

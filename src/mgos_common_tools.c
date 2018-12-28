@@ -164,13 +164,14 @@ void tools_to_lower_case(char *txt)
   }
 }
 
-char *tools_to_hex(int num, int len)
+bool tools_to_hex(int num, int len, char *out)
 {
   // Convert to HEX
-  char *s = json_asprintf("%0*x", len, num);
-  tools_to_upper_case(s);
-  LOG(LL_DEBUG, ("Number <%d> as HEX: <%s>", num, s));
-  return s;
+  //char *s = json_asprintf("%0*x", len, num);
+  sprintf(out, "%0*x", len, num);
+  tools_to_upper_case(out);
+  LOG(LL_DEBUG, ("Number <%d> as HEX: <%s>", num, out));
+  return true;
 }
 
 char *tools_get_fs_info(const char *path)
