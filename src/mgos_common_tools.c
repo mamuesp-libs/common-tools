@@ -23,31 +23,39 @@
 
 #include "mgos_common_tools.h"
 
-const char *tools_get_device_id() {
+const char *tools_get_device_id()
+{
   return mgos_sys_config_get_device_id();
 }
 
-const char *tools_get_device_ip() {
+const char *tools_get_device_ip()
+{
   struct mgos_net_ip_info ip_info;
   memset(&ip_info, 0, sizeof(ip_info));
   memset(sta_dev_ip, 0, STA_IP_LEN);
-  if (mgos_net_get_ip_info(MGOS_NET_IF_TYPE_WIFI, MGOS_NET_IF_WIFI_STA, &ip_info)) {
+  if (mgos_net_get_ip_info(MGOS_NET_IF_TYPE_WIFI, MGOS_NET_IF_WIFI_STA, &ip_info))
+  {
     mgos_net_ip_to_str(&ip_info.ip, sta_dev_ip);
-  } else if (mgos_net_get_ip_info(MGOS_NET_IF_TYPE_WIFI, MGOS_NET_IF_WIFI_AP, &ip_info)) {
+  }
+  else if (mgos_net_get_ip_info(MGOS_NET_IF_TYPE_WIFI, MGOS_NET_IF_WIFI_AP, &ip_info))
+  {
     mgos_net_ip_to_str(&ip_info.ip, sta_dev_ip);
   }
   return sta_dev_ip;
 }
 
-char *tools_get_mac_addr_fmt(uint8_t sep) {
+char *tools_get_mac_addr_fmt(uint8_t sep)
+{
   const char *macRaw = mgos_sys_ro_vars_get_mac_address();
   int i, out = 0;
 
-  for (i = 1; i <= 12; i++) {    
-    macAddr[out] = macRaw[i-1];
+  for (i = 1; i <= 12; i++)
+  {
+    macAddr[out] = macRaw[i - 1];
     out++;
-    if ((i % 2) == 0) {
-      macAddr[out] = (char) sep;
+    if ((i % 2) == 0)
+    {
+      macAddr[out] = (char)sep;
       out++;
     }
   }
@@ -57,22 +65,26 @@ char *tools_get_mac_addr_fmt(uint8_t sep) {
   return macAddr;
 }
 
-bool tools_file_exists(char *file) {
+bool tools_file_exists(char *file)
+{
   FILE *test = fopen(file, "rb");
   bool isExisting = (test != NULL);
-  
-  if (isExisting) {
+
+  if (isExisting)
+  {
     fclose(test);
   }
 
   return isExisting;
 }
 
-size_t tools_create_filepath(struct mbuf *res, char *path, char *file) {
+size_t tools_create_filepath(struct mbuf *res, char *path, char *file)
+{
   uint8_t end = 0;
 
   mbuf_init(res, strlen(path) + strlen(file) + 2);
-  if (strlen(path) > 0) {
+  if (strlen(path) > 0)
+  {
     mbuf_append(res, path, strlen(path));
     mbuf_append(res, "/", 1);
   }
@@ -82,7 +94,8 @@ size_t tools_create_filepath(struct mbuf *res, char *path, char *file) {
   return res->len;
 }
 
-bool tools_file_move(char *file, char *source, char* target) {
+bool tools_file_move(char *file, char *source, char *target)
+{
   struct mbuf src;
   struct mbuf tgt;
   size_t pos = 0;
@@ -91,13 +104,15 @@ bool tools_file_move(char *file, char *source, char* target) {
   tools_create_filepath(&src, source, file);
   tools_create_filepath(&tgt, target, file);
 
-  if (strcmp(src.buf, tgt.buf) == 0) {
+  if (strcmp(src.buf, tgt.buf) == 0)
+  {
     return true;
   }
-  
-  FILE* in = fopen(src.buf, "rb");
-  FILE* out = fopen(tgt.buf, "wb");
-  if(in == NULL || out == NULL) {
+
+  FILE *in = fopen(src.buf, "rb");
+  FILE *out = fopen(tgt.buf, "wb");
+  if (in == NULL || out == NULL)
+  {
     LOG(LL_ERROR, ("tools_file_move: error opening files! <%s> - <%s>", src.buf, tgt.buf));
     in = out = 0;
     return false;
@@ -106,15 +121,17 @@ bool tools_file_move(char *file, char *source, char* target) {
   fseek(in, 0L, SEEK_END); // file pointer at end of file
   pos = ftell(in);
   fseek(in, 0L, SEEK_SET); // file pointer set at start
-  while (pos--) {
-    ch = fgetc(in);  // copying file character by character
+  while (pos--)
+  {
+    ch = fgetc(in); // copying file character by character
     fputc(ch, out);
-  }    
+  }
 
   fclose(out);
   fclose(in);
-  
-  if(remove(src.buf) < 0) {
+
+  if (remove(src.buf) < 0)
+  {
     LOG(LL_ERROR, ("tools_file_move: error deleting file! <%s>", src.buf));
     return false;
   }
@@ -125,25 +142,39 @@ bool tools_file_move(char *file, char *source, char* target) {
   return true;
 }
 
-void tools_to_upper_case(char *txt) {
+void tools_to_upper_case(char *txt)
+{
   // Convert to upper case
   char *s = txt;
-  while (*s) {
-    *s = toupper((unsigned char) *s);
+  while (*s)
+  {
+    *s = toupper((unsigned char)*s);
     s++;
   }
 }
 
-void tools_to_lower_case(char *txt) {
+void tools_to_lower_case(char *txt)
+{
   // Convert to upper case
   char *s = txt;
-  while (*s) {
-    *s = tolower((unsigned char) *s);
+  while (*s)
+  {
+    *s = tolower((unsigned char)*s);
     s++;
   }
 }
 
-char *tools_get_fs_info(const char *path) {
+char *tools_to_hex(int num, int len)
+{
+  // Convert to HEX
+  char *s = json_asprintf("%0*x", len, num);
+  tools_to_upper_case(s);
+  LOG(LL_DEBUG, ("Number <%d> as HEX: <%s>", num, s));
+  return s;
+}
+
+char *tools_get_fs_info(const char *path)
+{
   return "{}";
   /*
   size_t ram_size = mgos_get_heap_size();
@@ -385,20 +416,20 @@ char *tool_json_prepare_result(char *buf, int len)
     }
   }
 */
-  bool mgos_common_tools_init(void)
+bool mgos_common_tools_init(void)
+{
+
+  if (!mgos_sys_config_get_common_tools_enable())
   {
-
-    if (!mgos_sys_config_get_common_tools_enable())
-    {
-      return true;
-    }
-
-    macAddr = malloc(64);
-    memset(macAddr, 0, 64);
-    fsInfo = malloc(256);
-    memset(fsInfo, 0, 256);
-    sta_dev_ip = malloc(STA_IP_LEN);
-    memset(sta_dev_ip, 0, STA_IP_LEN);
-
     return true;
   }
+
+  macAddr = malloc(64);
+  memset(macAddr, 0, 64);
+  fsInfo = malloc(256);
+  memset(fsInfo, 0, 256);
+  sta_dev_ip = malloc(STA_IP_LEN);
+  memset(sta_dev_ip, 0, STA_IP_LEN);
+
+  return true;
+}
