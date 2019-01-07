@@ -20,8 +20,8 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  **/
-#ifndef __tools_COMMON_TOOLS_H
-#define __tools_COMMON_TOOLS_H
+#ifndef __TOOLS_COMMON_TOOLS_H
+#define __TOOLS_COMMON_TOOLS_H
 
 #include <stdbool.h>
 #include <string.h>
@@ -36,68 +36,40 @@
 #include "mgos_rpc.h"
 
 typedef struct {
-   char *keys;   
+    char* keys;
 } tools_cb_data;
 
 #define STA_IP_LEN 17
 
-char *sta_dev_ip;
-char *macAddr;
-char *fsInfo;
-//char *result_keys;
-//char *result_object;
+char* sta_dev_ip;
+char* macAddr;
+char* fsInfo;
 
-/*
-typedef struct {
-   char *key;
-   int key_len;
-   char *val;
-   int val_len;
-   enum json_token_type type;
-   void *next;
-} json_token_listitem;
-*/
+const char* tools_get_device_id();
 
-const char *tools_get_device_id();
+const char* tools_get_device_ip();
 
-const char *tools_get_device_ip();
+char* tools_get_mac_addr_fmt(uint8_t sep);
 
-char *tools_get_mac_addr_fmt(uint8_t sep);
+bool tools_file_exists(char* file);
 
-bool tools_file_exists(char *file);
+size_t tools_create_filepath(struct mbuf* res, char* path, char* file);
 
-size_t tools_create_filepath(struct mbuf *res, char *path, char *file);
+bool tools_file_move(char* file, char* source, char* target);
 
-bool tools_file_move(char *file, char *source, char* target);
+void tools_to_upper_case(char* txt);
 
-void tools_to_upper_case(char *txt);
+void tools_to_lower_case(char* txt);
 
-void tools_to_lower_case(char *txt);
+bool tools_to_hex(int num, int len, char* out);
 
-bool tools_to_hex(int num, int len, char *out);
+char* tools_get_fs_info(const char* path);
 
-char *tools_get_fs_info(const char *path);
+void tools_hex_dump(void* addr, int len, int log_type, char* out, int out_len, bool show_ascii);
 
-/*
-json_token_listitem *tool_json_tokenlist_put(json_token_listitem *list, struct json_token *key, struct json_token *val, bool skip);
-
-json_token_listitem *tool_json_tokenlist_new(void);
-
-void tool_json_tokenlist_free(json_token_listitem *list);
-
-char *tool_json_get_keys(char *str_obj, int len);
-
-char *tool_json_merge(char *obj_A, int len_A, char *obj_B, int len_B);
-
-void tool_json_mergebuffer_free();
-
-char *tool_json_tokenlist_convert(json_token_listitem *list);
-
-char *tool_json_prepare_result(char *buf, int len);
-
-void tool_json_free_result();
-*/
+int min(int a, int b);
+int max(int a, int b);
 
 bool tools_common_tools_init(void);
 
-#endif // __tools_COMMON_TOOLS_H
+#endif // __TOOLS_COMMON_TOOLS_H

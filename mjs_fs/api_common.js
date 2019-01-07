@@ -15,6 +15,7 @@ let TOOLS = {
 	_toLower: ffi('void tools_to_lower_case(char *)'),
 	_toHEX: ffi('int tools_to_hex(int, int, char *)'),
 	_getFileSystemInfo: ffi('char *tools_get_fs_info(char *)'),
+	_hexDump: ffi('void tools_hex_dump(void*, int, int, char*, int, int)'),
 
 	mergeObjects: function (objA, objB, clone) {
 		let key, res = {};
@@ -40,70 +41,86 @@ let TOOLS = {
 	},
 
 	getParsedArrayFromCSV: function (values) {
-		let out = [];
-		let arrVal = TOOLS.splitString(values, ',', true);
-		for (let idx = 0; idx < arrVal.length; idx++) {
-			out.push(JSON.parse(arrVal[idx]));
+		if (values === undefined) {
+			return [];
+		} else {
+			let out = [];
+			let arrVal = TOOLS.splitString(values, ',', true);
+			for (let idx = 0; idx < arrVal.length; idx++) {
+				out.push(JSON.parse(arrVal[idx]));
+			}
+			return out;
 		}
-		return out;
 	},
 
 	replaceString: function (inTxt, search, replace, all) {
-		let searchLen = search.length;
-		let out = '';
-		let nPos = inTxt.indexOf(search);
-		let restTxt = inTxt;
-		while (nPos > -1) {
-			let left = (nPos > 0) ? restTxt.slice(0, nPos) : '';
-			out = out + left + replace;
-			restTxt = restTxt.slice(nPos + searchLen);
-			nPos = (all === true) ? restTxt.indexOf(search) : -1;
+		if (inTxt === undefined) {
+			return 'undefined';
+		} else {
+			let searchLen = search.length;
+			let out = '';
+			let nPos = inTxt.indexOf(search);
+			let restTxt = inTxt;
+			while (nPos > -1) {
+				let left = (nPos > 0) ? restTxt.slice(0, nPos) : '';
+				out = out + left + replace;
+				restTxt = restTxt.slice(nPos + searchLen);
+				nPos = (all === true) ? restTxt.indexOf(search) : -1;
+			}
+			return out + restTxt;
 		}
-		return out + restTxt;
 	},
 
 	splitStringFrom: function (inTxt, sepChr, start) {
-		let buff = '';
-		let out = [];
-		let found = 0;
-		for (let i = 0; i < inTxt.length; i++) {
-			if (inTxt[i] !== sepChr) {
-				if (found >= start) {
-					buff = buff + inTxt[i];
-				}
-			} else {
-				if (buff.length > 0) {
+		if (inTxt === undefined) {
+			return [];
+		} else {
+			let buff = '';
+			let out = [];
+			let found = 0;
+			for (let i = 0; i < inTxt.length; i++) {
+				if (inTxt[i] !== sepChr) {
 					if (found >= start) {
-						out.push(buff);
+						buff = buff + inTxt[i];
 					}
+				} else {
+					if (buff.length > 0) {
+						if (found >= start) {
+							out.push(buff);
+						}
+					}
+					buff = '';
+					found++;
 				}
-				buff = '';
-				found++;
 			}
+			if (buff.length > 0) {
+				out.push(buff);
+			}
+			return out;
 		}
-		if (buff.length > 0) {
-			out.push(buff);
-		}
-		return out;
 	},
 
 	splitString: function (inTxt, sepChr, noTrim) {
-		let buff = '';
-		let out = [];
-		for (let i = 0; i < inTxt.length; i++) {
-			if (inTxt[i] !== sepChr) {
-				buff = buff + inTxt[i];
-			} else {
-				if (buff.length > 0) {
-					out.push(noTrim ? buff : this.trimString(buff));
-					buff = '';
+		if (inTxt === undefined) {
+			return [];
+		} else {
+			let buff = '';
+			let out = [];
+			for (let i = 0; i < inTxt.length; i++) {
+				if (inTxt[i] !== sepChr) {
+					buff = buff + inTxt[i];
+				} else {
+					if (buff.length > 0) {
+						out.push(noTrim ? buff : this.trimString(buff));
+						buff = '';
+					}
 				}
 			}
+			if (buff.length > 0) {
+				out.push(buff);
+			}
+			return out;
 		}
-		if (buff.length > 0) {
-			out.push(buff);
-		}
-		return out;
 	},
 
 	joinArrToString: function (inArr, sepChr, noTrim) {
@@ -206,15 +223,23 @@ let TOOLS = {
 	},
 
 	toUpperCase: function (inTxt) {
-		let outTxt = ("out" + inTxt);
-		this._toUpper(outTxt);
-		return outTxt.slice(3);
+		if (inTxt === undefined) {
+			return 'undefined';
+		} else {
+			let outTxt = ("out" + inTxt);
+			this._toUpper(outTxt);
+			return outTxt.slice(3);
+		}
 	},
 
 	toLowerCase: function (inTxt) {
-		let outTxt = ("out" + inTxt);
-		this._toLower(outTxt);
-		return outTxt.slice(3);
+		if (inTxt === undefined) {
+			return 'undefined';
+		} else {
+			let outTxt = ("out" + inTxt);
+			this._toLower(outTxt);
+			return outTxt.slice(3);
+		}
 	},
 
 	toHEX: function (probe, len) {
@@ -229,6 +254,15 @@ let TOOLS = {
 		this._toHEX(number, len, result);
 		result = "0x" + result.slice(0, len);
 		return result;
+	},
+
+	hexDump: function (data, len, logType, outLen, showAscii) {
+		let out = null;
+		if (out_len > 0) {
+			out = this.createStr(outLen + 1);
+		}
+		this._hexDump(data, len, logType, out, outLen, showAscii);
+		return out;
 	},
 
 	isInArr: function (entry, arrTest) {
