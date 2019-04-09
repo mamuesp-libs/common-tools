@@ -219,7 +219,7 @@ let TOOLS = {
 	},
 
 	getDeviceIpAddr: function () {
-		return this._getIpAddr(0);
+		return this._getIpAddr();
 	},
 
 	toUpperCase: function (inTxt) {
@@ -279,10 +279,10 @@ let TOOLS = {
 		let result = chunk;
 		while (len > result.length) {
 			result += chunk;
-		}		
+		}
 		return result;
 	},
-	
+
 	colorHexToRgb: function (hex) {
 		hex = this.replaceString(hex, '#', '', true);
 		let r,g,b;
