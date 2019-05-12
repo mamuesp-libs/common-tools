@@ -28,12 +28,20 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <math.h>
 #include "frozen.h"
 #include "mgos.h"
+#include "mgos_wifi.h"
 #include "mgos_app.h"
 #include "mgos_config.h"
 #include "mgos_ro_vars.h"
-#include "mgos_rpc.h"
+
+typedef struct {
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+    uint8_t a;
+} tools_rgb_data;
 
 typedef struct {
     char* keys;
@@ -44,6 +52,10 @@ typedef struct {
 char* sta_dev_ip;
 char* macAddr;
 char* fsInfo;
+
+bool tools_str_split_free(char** arr, size_t len);
+
+int tools_str_split(const char* str, char c, char*** arr);
 
 const char* tools_get_device_id();
 
@@ -67,8 +79,28 @@ char* tools_get_fs_info(const char* path);
 
 void tools_hex_dump(void* addr, int len, int log_type, char* out, int out_len, bool show_ascii);
 
+void tools_rgb_to_hsv(tools_rgb_data in, double* h, double* s, double* v);
+tools_rgb_data tools_hsv_to_rgb(double h, double s, double v);
+
+int tools_get_random(int start, int end);
+tools_rgb_data tools_get_random_color(tools_rgb_data start, tools_rgb_data* test, uint16_t count, double min_dist);
+tools_rgb_data tools_get_random_color_fade(tools_rgb_data start, tools_rgb_data* test, uint16_t count, double min_dist, double s_new, double v_new);
+double tools_check_color_distance(tools_rgb_data* start, uint16_t count, double h_test);
+void tools_config_get_color(char* fmt, char* key, tools_rgb_data* color);
+tools_rgb_data tools_color_wheel(double wheel_pos, double base);
+tools_rgb_data tools_fade_color(tools_rgb_data start, double fade);
+
+char* tools_config_get_dyn(const char* fmt, const char* key, bool do_lower);
+char** tools_config_get_dyn_arr(const char* fmt, const char* key, size_t* elems);
+
+void tools_set_color(tools_rgb_data* color, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+tools_rgb_data tools_hexcolor_to_rgb(uint32_t hex_val);
+tools_rgb_data tools_hexcolor_str_to_rgb(char* hex_val);
+
 int min(int a, int b);
 int max(int a, int b);
+double minval(double a, double b, double c);
+double maxval(double a, double b, double c);
 
 bool tools_common_tools_init(void);
 

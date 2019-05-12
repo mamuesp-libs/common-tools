@@ -219,7 +219,7 @@ let TOOLS = {
 	},
 
 	getDeviceIpAddr: function () {
-		return this._getIpAddr(0);
+		return this._getIpAddr();
 	},
 
 	toUpperCase: function (inTxt) {
