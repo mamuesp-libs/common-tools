@@ -1,3 +1,3 @@
-# Common tools (a tool collection)
+# Common tools (a tool collection) for use with Mongoose-OS
 
 Just a bunch of base functionality you'll need everywhere ...
