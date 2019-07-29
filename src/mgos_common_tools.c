@@ -349,6 +349,7 @@ bool tools_str_split_free(char** arr, size_t len)
         for (i = 0; i < len; i++) {
             free(arr[i]);
         }
+        free(arr);
         return true;
     }
     return false;
@@ -378,6 +379,15 @@ char* tools_config_get_dyn(const char* fmt, const char* key, bool do_lower)
     return (char*)dynVal.p;
 }
 
+uint32_t tools_config_get_dyn_number(const char* fmt, const char* key) {
+    char* str_result = tools_config_get_dyn(fmt, key, false);
+    uint32_t result = 0;
+    if (str_result != NULL) {
+        result = (uint32_t) atoi(str_result);
+    }
+    return result;
+}
+
 char** tools_config_get_dyn_arr(const char* fmt, const char* key, size_t* elems)
 {
     char* subs = tools_config_get_dyn(fmt, key, false);
@@ -388,6 +398,63 @@ char** tools_config_get_dyn_arr(const char* fmt, const char* key, size_t* elems)
         return NULL;
     }
     return values;
+}
+
+uint32_t *tools_config_get_number_arr(const char* data, const char separator, uint32_t *result_count) {
+    char** str_results;
+    uint32_t *results;
+    *result_count = tools_str_split(data, separator, &str_results);
+    results = *result_count > 0 ? calloc(*result_count, sizeof(uint32_t)) : NULL;
+    for (int i = 0; i < *result_count; i++) {
+        results[i] = (uint32_t) atoi(str_results[i]);
+    }
+    tools_str_split_free(str_results, *result_count);
+    return results;
+}
+
+char **tools_config_get_string_arr(const char* data, const char separator, uint32_t *result_count) {
+    char** str_results;
+    char **results;
+    *result_count = tools_str_split(data, separator, &str_results);
+    results = *result_count > 0 ? calloc(*result_count, sizeof(char *)) : NULL;
+    for (int i = 0; i < *result_count; i++) {
+        mg_asprintf(&results[i], 0, "%s", str_results[i]);
+    }
+    tools_str_split_free(str_results, *result_count);
+    return results;
+}
+
+void tools_free_string_arr(char** data, uint32_t count) {
+    for (int i = 0; i < count; i++) {
+        free(data[i]);
+    }
+    free(data);
+}
+
+tools_rgb_data *tools_config_get_color_arr(const char* data, const char separator, uint32_t *result_count) {
+    char** str_colors;
+    *result_count = tools_str_split(data, separator, &str_colors);
+    tools_rgb_data *results = *result_count > 0 ? calloc(*result_count, sizeof(tools_rgb_data)) : NULL;
+    for (int i = 0; i < *result_count; i++) {
+        char** str_rgb;
+        if (tools_str_split(str_colors[i], ',', &str_rgb) == 3) {
+            tools_set_color(&results[i], atoi(str_rgb[0]), atoi(str_rgb[1]), atoi(str_rgb[2]), 1);
+            tools_str_split_free(str_rgb, 3);
+        }
+    }
+    tools_str_split_free(str_colors, *result_count);
+    return results;
+}
+
+void tools_scan_array(const char *str, int len, void *user_data) {
+  struct json_token t;
+  uint8_t *array = (uint8_t *) user_data;
+  int i;
+  LOG(LL_DEBUG, ("Parsing array: %.*s", len, str));
+  for (i = 0; json_scanf_array_elem(str, len, "", i, &t) > 0; i++) {
+    array[i] = ((uint8_t) *t.ptr) - '0';
+    LOG(LL_DEBUG, ("Index %d, token [%.*s]", i, t.len, t.ptr));
+  }
 }
 
 typedef struct {

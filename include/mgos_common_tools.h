@@ -92,6 +92,11 @@ tools_rgb_data tools_fade_color(tools_rgb_data start, double fade);
 
 char* tools_config_get_dyn(const char* fmt, const char* key, bool do_lower);
 char** tools_config_get_dyn_arr(const char* fmt, const char* key, size_t* elems);
+uint32_t *tools_config_get_number_arr(const char* data, const char separator, uint32_t *result_count);
+tools_rgb_data *tools_config_get_color_arr(const char* data, const char separator, uint32_t *result_count);
+uint32_t tools_config_get_dyn_number(const char* fmt, const char* key);
+
+void tools_scan_array(const char *str, int len, void *user_data);
 
 void tools_set_color(tools_rgb_data* color, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 tools_rgb_data tools_hexcolor_to_rgb(uint32_t hex_val);
