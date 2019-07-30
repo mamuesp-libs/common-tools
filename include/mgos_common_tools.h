@@ -37,11 +37,24 @@
 #include "mgos_ro_vars.h"
 
 typedef struct {
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-    uint8_t a;
-} tools_rgb_data;
+    void* data;
+    uint32_t len;
+} tools_array;
+
+typedef struct {
+    char* data;
+    uint32_t len;
+} tools_char_array;
+
+typedef struct {
+    uint32_t* data;
+    uint32_t len;
+} tools_num_array;
+
+typedef struct {
+    tools_num_array* data;
+    uint32_t len;
+} tools_num_tree;
 
 typedef struct {
     char* keys;
@@ -79,28 +92,16 @@ char* tools_get_fs_info(const char* path);
 
 void tools_hex_dump(void* addr, int len, int log_type, char* out, int out_len, bool show_ascii);
 
-void tools_rgb_to_hsv(tools_rgb_data in, double* h, double* s, double* v);
-tools_rgb_data tools_hsv_to_rgb(double h, double s, double v);
-
 int tools_get_random(int start, int end);
-tools_rgb_data tools_get_random_color(tools_rgb_data start, tools_rgb_data* test, uint16_t count, double min_dist);
-tools_rgb_data tools_get_random_color_fade(tools_rgb_data start, tools_rgb_data* test, uint16_t count, double min_dist, double s_new, double v_new);
-double tools_check_color_distance(tools_rgb_data* start, uint16_t count, double h_test);
-void tools_config_get_color(char* fmt, char* key, tools_rgb_data* color);
-tools_rgb_data tools_color_wheel(double wheel_pos, double base);
-tools_rgb_data tools_fade_color(tools_rgb_data start, double fade);
 
 char* tools_config_get_dyn(const char* fmt, const char* key, bool do_lower);
 char** tools_config_get_dyn_arr(const char* fmt, const char* key, size_t* elems);
-uint32_t *tools_config_get_number_arr(const char* data, const char separator, uint32_t *result_count);
-tools_rgb_data *tools_config_get_color_arr(const char* data, const char separator, uint32_t *result_count);
 uint32_t tools_config_get_dyn_number(const char* fmt, const char* key);
 
-void tools_scan_array(const char *str, int len, void *user_data);
+tools_num_array tools_config_get_number_arr(const char* data, const char separator);
+tools_num_tree tools_config_get_number_tree(const char* data, const char separator);
 
-void tools_set_color(tools_rgb_data* color, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-tools_rgb_data tools_hexcolor_to_rgb(uint32_t hex_val);
-tools_rgb_data tools_hexcolor_str_to_rgb(char* hex_val);
+void tools_scan_array(const char *str, int len, void *user_data);
 
 int min(int a, int b);
 int max(int a, int b);
