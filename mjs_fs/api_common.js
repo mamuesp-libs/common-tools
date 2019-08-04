@@ -1,7 +1,6 @@
 load('api_sys.js');
 
 let timeProfile = {};
-let logHead = (typeof logHead !== 'undefined') ? logHead : "TOOLS - ";
 
 let TOOLS = {
 	name: "TOOLS",
@@ -38,6 +37,15 @@ let TOOLS = {
 			res.push(key);
 		}
 		return res;
+	},
+
+	flipArray: function(array) {
+		let result = [];
+		let count = 0;
+		for (let i = array.length - 1; i >= 0; i--) {
+			result[count++] = array[i];
+		}
+		return result;
 	},
 
 	getParsedArrayFromCSV: function (values) {
@@ -100,7 +108,7 @@ let TOOLS = {
 		}
 	},
 
-	splitString: function (inTxt, sepChr, noTrim) {
+	splitString: function (inTxt, sepChr, noTrim, flip) {
 		if (inTxt === undefined) {
 			return [];
 		} else {
@@ -119,7 +127,7 @@ let TOOLS = {
 			if (buff.length > 0) {
 				out.push(buff);
 			}
-			return out;
+			return flip ? this.flipArray(out) : out;
 		}
 	},
 
@@ -282,4 +290,4 @@ let TOOLS = {
 		}
 		return result;
 	}
-}
+};

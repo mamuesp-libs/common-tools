@@ -42,7 +42,7 @@ typedef struct {
 } tools_array;
 
 typedef struct {
-    char* data;
+    char** data;
     uint32_t len;
 } tools_char_array;
 
@@ -52,7 +52,7 @@ typedef struct {
 } tools_num_array;
 
 typedef struct {
-    tools_num_array* data;
+    tools_num_array** data;
     uint32_t len;
 } tools_num_tree;
 
@@ -98,8 +98,19 @@ char* tools_config_get_dyn(const char* fmt, const char* key, bool do_lower);
 char** tools_config_get_dyn_arr(const char* fmt, const char* key, size_t* elems);
 uint32_t tools_config_get_dyn_number(const char* fmt, const char* key);
 
-tools_num_array tools_config_get_number_arr(const char* data, const char separator);
-tools_num_tree tools_config_get_number_tree(const char* data, const char separator);
+tools_char_array *tools_create_char_array(uint32_t size);
+void tools_free_char_array(tools_char_array* arr);
+tools_char_array *tools_config_get_char_arr(const char* data, const char separator);
+
+tools_num_array *tools_create_num_array(uint32_t size);
+void tools_free_num_arr(tools_num_array* arr);
+bool tools_is_in_num_arr(tools_num_array* arr, uint32_t test);
+tools_num_array *tools_config_get_number_arr(const char* data, const char separator);
+
+tools_num_tree *tools_create_num_tree(uint32_t size);
+tools_num_tree *tools_config_get_number_tree(const char* data, const char separator);
+
+void tools_text_dump_array(void* array, const char* type, const char* name, enum cs_log_level level);
 
 void tools_scan_array(const char *str, int len, void *user_data);
 
