@@ -163,6 +163,7 @@ bool tools_to_hex(int num, int len, char* out)
 
 char* tools_get_fs_info(const char* path)
 {
+    (void)path;
     return "{}";
     size_t ram_size = mgos_get_heap_size();
     size_t ram_free = mgos_get_free_heap_size();
@@ -407,7 +408,7 @@ char** tools_config_get_string_arr(const char* data, const char separator, uint3
     char** results;
     *result_count = tools_str_split(data, separator, &str_results);
     results = *result_count > 0 ? calloc(*result_count, sizeof(char*)) : NULL;
-    for (int i = 0; i < *result_count; i++) {
+    for (uint32_t i = 0; i < *result_count; i++) {
         mg_asprintf(&results[i], 0, "%s", str_results[i]);
     }
     tools_str_split_free(str_results, *result_count);
@@ -416,7 +417,7 @@ char** tools_config_get_string_arr(const char* data, const char separator, uint3
 
 void tools_free_string_arr(char** data, uint32_t count)
 {
-    for (int i = 0; i < count; i++) {
+    for (uint32_t i = 0; i < count; i++) {
         free(data[i]);
     }
     free(data);
@@ -432,7 +433,7 @@ tools_char_array* tools_create_char_array(uint32_t size)
 
 void tools_free_char_array(tools_char_array* arr)
 {
-    for (int i = 0; i < arr->len; i++) {
+    for (uint32_t i = 0; i < arr->len; i++) {
         if (arr->data[i] != NULL) {
             free(arr->data[i]);
             arr->data[i] = NULL;
@@ -481,7 +482,7 @@ tools_char_array* tools_config_get_char_arr(const char* data, const char separat
     char** str_results;
     uint32_t size = tools_str_split(data, separator, &str_results);
     tools_char_array* results = tools_create_char_array(size);
-    for (int i = 0; i < results->len; i++) {
+    for (uint32_t i = 0; i < results->len; i++) {
         size_t dat_len = strlen(str_results[i]);
         results->data[i] = calloc(1, dat_len + 1);
         strncpy(results->data[i], str_results[i], dat_len);
@@ -496,7 +497,7 @@ tools_num_array* tools_config_get_number_arr(const char* data, const char separa
     char** str_results;
     uint32_t size = tools_str_split(data, separator, &str_results);
     tools_num_array* results = tools_create_num_array(size);
-    for (int i = 0; i < results->len; i++) {
+    for (uint32_t i = 0; i < results->len; i++) {
         results->data[i] = (uint32_t)atoi(str_results[i]);
     }
     tools_str_split_free(str_results, results->len);
@@ -508,7 +509,7 @@ tools_num_tree* tools_config_get_number_tree(const char* data, const char separa
     char** str_groups;
     uint32_t size = tools_str_split(data, separator, &str_groups);
     tools_num_tree* results = tools_create_num_tree(size);
-    for (int i = 0; i < results->len; i++) {
+    for (uint32_t i = 0; i < results->len; i++) {
         results->data[i] = tools_config_get_number_arr(str_groups[i], ',');
     }
     tools_str_split_free(str_groups, results->len);
@@ -519,7 +520,7 @@ void tools_text_dump_array(void* array, const char* type, const char* name, enum
 {
     if (strcmp(type, "tools_num_array") == 0) {
         tools_num_array* num_array = (tools_num_array*)array;
-        for (int i = 0; i < num_array->len; i++) {
+        for (uint32_t i = 0; i < num_array->len; i++) {
             LOG(level, ("Content of '%s (type: %s)' - Len: %d, Data: %d", name, type, num_array->len, num_array->data[i]));
         }
         // } else if (strcmp(type, "tools_rgb_array") == 0) {
@@ -529,14 +530,14 @@ void tools_text_dump_array(void* array, const char* type, const char* name, enum
         //     }
     } else if (strcmp(type, "tools_char_array") == 0) {
         tools_char_array* char_array = (tools_char_array*)array;
-        for (int i = 0; i < char_array->len; i++) {
+        for (uint32_t i = 0; i < char_array->len; i++) {
             LOG(level, ("Content of '%s (type: %s)' - Len: %d, Data: %s", name, type, char_array->len, char_array->data[i]));
         }
     } else if (strcmp(type, "tools_num_tree") == 0) {
         tools_num_tree* num_tree = (tools_num_tree*)array;
-        for (int i = 0; i < num_tree->len; i++) {
+        for (uint32_t i = 0; i < num_tree->len; i++) {
             tools_num_array* curr_array = num_tree->data[i];
-            for (int j = 0; j < curr_array->len; j++) {
+            for (uint32_t j = 0; j < curr_array->len; j++) {
                 LOG(level, ("Content of '%s (type: %s)' - Len: %d, Data: %d", name, type, curr_array->len, curr_array->data[j]));
             }
         }
