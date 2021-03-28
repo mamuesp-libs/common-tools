@@ -521,7 +521,7 @@ void tools_text_dump_array(void* array, const char* type, const char* name, enum
     if (strcmp(type, "tools_num_array") == 0) {
         tools_num_array* num_array = (tools_num_array*)array;
         for (uint32_t i = 0; i < num_array->len; i++) {
-            LOG(level, ("Content of '%s (type: %s)' - Len: %d, Data: %d", name, type, num_array->len, num_array->data[i]));
+            LOG(level, ("Content of '%s (type: %s)' - Len: %lu, Data: %lu", name, type, (unsigned long)num_array->len, (unsigned long)num_array->data[i]));
         }
         // } else if (strcmp(type, "tools_rgb_array") == 0) {
         //     tools_rgb_array* rgb_array = (tools_rgb_array*)array;
@@ -531,14 +531,14 @@ void tools_text_dump_array(void* array, const char* type, const char* name, enum
     } else if (strcmp(type, "tools_char_array") == 0) {
         tools_char_array* char_array = (tools_char_array*)array;
         for (uint32_t i = 0; i < char_array->len; i++) {
-            LOG(level, ("Content of '%s (type: %s)' - Len: %d, Data: %s", name, type, char_array->len, char_array->data[i]));
+            LOG(level, ("Content of '%s (type: %s)' - Len: %lu, Data: %s", name, type, (unsigned long)char_array->len, char_array->data[i]));
         }
     } else if (strcmp(type, "tools_num_tree") == 0) {
         tools_num_tree* num_tree = (tools_num_tree*)array;
         for (uint32_t i = 0; i < num_tree->len; i++) {
             tools_num_array* curr_array = num_tree->data[i];
             for (uint32_t j = 0; j < curr_array->len; j++) {
-                LOG(level, ("Content of '%s (type: %s)' - Len: %d, Data: %d", name, type, curr_array->len, curr_array->data[j]));
+                LOG(level, ("Content of '%s (type: %s)' - Len: %lu, Data: %lu", name, type, (unsigned long)curr_array->len, (unsigned long)curr_array->data[j]));
             }
         }
     }
